@@ -1,0 +1,15 @@
+---
+# tasks file for sonar-qube-role
+- name: Pull Nexus Docker image
+  docker_image:
+    name: sonatype/nexus3
+    tag: latest
+    source: pull
+
+- name: Run SonarQube container
+  docker_container:
+    name: sonar
+    image: sonatype/nexus3
+    state: started
+    ports:
+      - "8081:8081"

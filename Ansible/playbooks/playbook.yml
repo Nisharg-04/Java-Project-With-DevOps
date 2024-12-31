@@ -1,0 +1,44 @@
+---
+- name: Install Docker on all hosts
+  hosts: all
+  become: true
+  roles:
+    - docker-role
+
+- name: Setup Kubernetes Cluster
+  hosts: k8s_all
+  become: true
+  roles:
+    - master-workers-k8s-role
+
+- name: Install on master node
+  hosts: k8s_master
+  become: true
+  roles:
+    - master-role
+
+
+- name: Install on worker nodes
+  hosts: k8s_workers
+  become: true
+  roles:
+    - worker-role
+ 
+
+- name: Install SonarQube on SonarQube hosts
+  hosts: sonarqube
+  become: true
+  roles:
+    - sonar-qube-role
+
+- name: Install Jenkins on Jenkins hosts
+  hosts: jenkins
+  become: true
+  roles:
+    - jenkins-role
+
+- name: Install Nexus on Nexus hosts
+  hosts: nexus
+  become: true
+  roles:
+    - nexus-role

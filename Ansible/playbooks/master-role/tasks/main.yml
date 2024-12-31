@@ -1,0 +1,24 @@
+---
+# tasks/main.yml for master-role
+
+- name: Initialize Kubernetes cluster
+  ansible.builtin.command: kubeadm init
+  register: kubeadm_output
+
+- name: Set up local kubeconfig
+  ansible.builtin.shell: |
+    mkdir -p $HOME/.kube
+    cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Install Calico network plugin
+  ansible.builtin.command: |
+    kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+
+- name: Generate join command for worker nodes
+  ansible.builtin.shell: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Save join command to a fact
+  ansible.builtin.set_fact:
+    worker_join_command: "{{ join_command.stdout }}"

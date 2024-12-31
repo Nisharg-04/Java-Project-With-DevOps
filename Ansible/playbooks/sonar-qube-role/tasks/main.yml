@@ -1,0 +1,15 @@
+---
+# tasks file for sonar-qube-role
+- name: Pull SonarQube Docker image
+  docker_image:
+    name: sonarqube
+    tag: lts-community
+    source: pull
+
+- name: Run SonarQube container
+  docker_container:
+    name: sonar
+    image: sonarqube:lts-community
+    state: started
+    ports:
+      - "9000:9000"

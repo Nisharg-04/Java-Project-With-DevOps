@@ -1,0 +1,8 @@
+---
+# tasks/main.yml for worker-role
+
+- name: Reset Kubernetes configuration
+  ansible.builtin.command: kubeadm reset -f
+
+- name: Join worker node to the cluster
+  ansible.builtin.shell: "{{ hostvars['master']['worker_join_command'] }} --cri-socket 'unix:///run/containerd/containerd.sock' --v=5"

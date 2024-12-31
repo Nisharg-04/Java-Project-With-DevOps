@@ -1,0 +1,11 @@
+# [nexus]
+# master ansible_host=54.90.217.69
+
+# [workers]
+# worker1 ansible_host=44.223.48.103
+
+# [all:vars]
+# ansible_user=ubuntu
+# ansible_ssh_private_key_file=/tmp/devops-key
+# ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
+# ansible_python_interpreter=/usr/bin/python3
