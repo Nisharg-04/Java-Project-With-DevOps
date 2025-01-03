@@ -3,14 +3,14 @@
 ![Architecture Diagram](Architecture_Diagram.png)
 
 ## Table of Contents
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Setup and Installation](#setup-and-installation)
-- [Continuous Integration and Deployment](#continuous-integration-and-deployment)
-- [Project Structure](#project-structure)
-- [How to Use](#how-to-use)
-- [Testing](#testing)
+- [Project Overview]
+- [Features]
+- [Technologies Used]
+- [Setup and Installation]
+- [Continuous Integration and Deployment]
+- [Project Structure]
+- [How to Use]
+- [Testing]
 
 ## Project Overview
 This project demonstrates the integration of DevOps principles with a Java application. It includes the complete lifecycle of software development, deployment, and monitoring, following industry best practices. The project utilizes tools and technologies for source control, continuous integration, containerization, orchestration, and monitoring.
@@ -38,6 +38,92 @@ This project demonstrates the integration of DevOps principles with a Java appli
 3. Docker and Docker Compose
 4. Kubernetes cluster (Minikube, AKS, EKS, or GKE)
 5. Terraform/Ansible for infrastructure provisioning
+
+
+
+# Infrastructure Setup with Terraform, Ansible
+
+## Overview
+This documentation outlines the process for setting up a complete  infrastructure for a Java-based application. The infrastructure is provisioned using Terraform, and Ansible is used to configure the instances, including setting up a Kubernetes cluster and related services like Jenkins, SonarQube, and Nexus.
+
+---
+
+## Prerequisites
+
+1. **Terraform**: Ensure Terraform is installed on your local machine.
+2. **Ansible**: Install Ansible and ensure the required roles are configured.
+3. **AWS Account**: Ensure access to an AWS account with the necessary permissions.
+4. **Public Key**: Place your public key file (`devops-key.pub`) in the appropriate directory.
+5. **AMI**: Replace placeholder AMI IDs in the Terraform configuration with appropriate values.
+
+---
+
+## Steps to Provision Infrastructure
+
+### 1. Clone the Repository
+```bash
+$ git clone <repository-url>
+$ cd <repository-directory>
+```
+
+### 2. Initialize Terraform
+```bash
+$ terraform init
+```
+
+### 3. Validate the Configuration
+```bash
+$ terraform validate
+```
+
+### 4. Apply the Configuration
+```bash
+$ terraform apply
+```
+- Review the plan and type `yes` to proceed.
+- Terraform provisions the VPC, security groups, EC2 instances, and other resources.
+
+---
+
+## Update Inventory Script
+After the Terraform provisioning is complete, update the Ansible inventory file dynamically:
+
+1. Run the inventory update script:
+```bash
+$ ./update_inventory.sh
+```
+- This script fetches the public/private IPs of the provisioned instances and updates the Ansible inventory file.
+
+---
+
+## Configure Instances with Ansible
+
+### Configure all the Instances
+```bash
+   $ ansible-playbook -i inventories/inventory playbook.yml
+   ```
+
+---
+
+## Kubernetes Cluster Verification
+
+1. **Verify Nodes**:
+   Run the following command on the master node:
+   ```bash
+   $ kubectl get nodes
+   ```
+   Ensure all nodes are in the `Ready` state.
+
+---
+
+## Notes
+
+- **Terraform Modules**: The `infra` directory contains reusable Terraform modules for EC2 instances.
+- **Ansible Roles**: Ensure roles for Docker, Kubernetes, SonarQube, Jenkins, and Nexus are properly configured in the `roles` directory.
+
+---
+
+This document provides a high-level guide to setting up and configuring the infrastructure. For detailed configurations, refer to the respective directories and files in the repository.
 
 ### Clone the Repository
 ```bash
