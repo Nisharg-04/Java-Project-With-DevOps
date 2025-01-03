@@ -25,7 +25,7 @@ This project demonstrates the integration of DevOps principles with a Java appli
 - **Programming Language:** Java
 - **Build Tool:** Maven/Gradle
 - **Version Control:** Git
-- **CI/CD:** Jenkins/GitHub Actions
+- **CI/CD:** Jenkins
 - **Containerization:** Docker
 - **Orchestration:** Kubernetes
 - **Infrastructure as Code:** Terraform/Ansible
@@ -56,64 +56,71 @@ To run the application locally:
 java -jar target/your-application.jar
 ```
 
+
 ### Docker Setup
 1. Build the Docker image:
    ```bash
-   docker build -t java-devops-project .
+   docker build -t nishargsoni/boardgame:latest .
    ```
 2. Run the Docker container:
    ```bash
-   docker run -p 8080:8080 java-devops-project
+   docker run -p 8080:8080 nishargsoni/boardgame:latest
    ```
+
 
 ### Kubernetes Deployment
 1. Apply the Kubernetes manifests:
    ```bash
-   kubectl apply -f k8s/
+   kubectl apply -f deployment-service.yaml
    ```
-2. Access the application using the service endpoint.
+2. Verify the deployment:
+   ```bash
+   kubectl get pods -n webapps
+   kubectl get svc -n webapps
+   ``
 
 ## Continuous Integration and Deployment
-The project includes a CI/CD pipeline defined in `.github/workflows` or Jenkins pipeline scripts.
+The project uses Jenkins for CI/CD.
 
-### CI Pipeline
-- Automated build and test on every commit
-- Static code analysis using tools like SonarQube
+### Jenkins Pipeline Overview
+The Jenkins pipeline automates the entire CI/CD workflow for a Java-based project. It includes the following stages:
 
-### CD Pipeline
-- Docker image build and push to Docker Hub
-- Deployment to Kubernetes cluster
+1. **Code Checkout:** Pulls the source code from the GitHub repository.
+2. **Compile the Code:** Compiles the Java project using Maven.
+3. **Test the Code:** Runs unit tests to ensure code quality.
+4. **Scan the Code:** Scans the codebase using Trivy for security vulnerabilities.
+5. **SonarQube Analysis:** Analyzes the code for quality metrics using SonarQube.
+6. **Build:** Packages the application into a JAR/WAR file.
+7. **Publish to Nexus:** Deploys the build artifact to Nexus Repository Manager.
+8. **Build Docker Image:** Creates a Docker image for the application.
+9. **Push Docker Image:** Pushes the Docker image to Docker Hub.
+10. **Deploy to Kubernetes:** Deploys the application to a Kubernetes cluster.
+11. **Verify Deployment:** Ensures the application is running correctly in the cluster.
+
+### Notes
+- **Tools and Plugins:** Ensure Jenkins has the required plugins installed (e.g., Git, Maven Integration, Docker Pipeline, SonarQube Scanner, and Kubernetes CLI).
+- **SonarQube Configuration:** Configure SonarQube in Jenkins with the appropriate credentials and tools.
+- **Docker Hub Credentials:** Store Docker Hub credentials securely in Jenkins Credentials Manager.
+- **Kubernetes Configuration:** Ensure Kubernetes is properly configured with valid credentials and the correct context.
 
 ## Project Structure
 ```plaintext
 Java-Project-With-DevOps/
+├── Ansible/            # Configuration of Infrastructure
+├── Terraform/          # Setup Infrastructure
 ├── src/                # Source code
 ├── target/             # Compiled files
 ├── Dockerfile          # Docker image definition
-├── k8s/                # Kubernetes manifests
-├── terraform/          # Infrastructure as Code files
-├── ansible/            # Configuration management scripts
-├── .github/workflows/  # CI/CD pipeline configuration
+├── k8s-config/                # Kubernetes manifests
+├── Jenkinsfile         # Jenkins pipeline configuration
 ├── README.md           # Project documentation
 ```
 
 ## How to Use
 1. Clone the repository and set up the environment.
-2. Run the application locally or deploy it to a containerized environment.
-3. Use monitoring tools to observe application performance.
+2. Use Jenkins to run the pipeline and deploy the application.
+3. Verify the deployment on the Kubernetes cluster.
 
-## Testing
-### Unit Tests
-Run unit tests using Maven:
-```bash
-mvn test
-```
-
-### Integration Tests
-Run integration tests with:
-```bash
-mvn verify
-```
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
