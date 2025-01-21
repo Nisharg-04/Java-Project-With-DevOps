@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: boardgame
-          image: nishargsoni/boardgame:latest` # Image that will be used to containers in the cluster
+          image: nishargsoni/boardgame:latest # Image that will be used to containers in the cluster
           imagePullPolicy: Always
           ports:
             - containerPort: 8080 # The port that the container is running on in the cluster
@@ -33,4 +33,4 @@ spec:
     - protocol: "TCP"
       port: 80
       targetPort: 8080 
-  type: LoadBalancer # type of the service.
+  type: NodePort # type of the service.
