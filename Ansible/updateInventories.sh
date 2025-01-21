@@ -18,7 +18,6 @@ k8s_worker_2_ip=$(terraform output -json k8s_worker_2_ip | jq -r '.')
 sonarqube_ip=$(terraform output -json sonarqube_ip | jq -r '.')
 jenkins_ip=$(terraform output -json jenkins_ip | jq -r '.')
 nexus_ip=$(terraform output -json nexus_ip | jq -r '.')
-monitoring_ip=$(terraform output -json monitoring_ip | jq -r '.')
 
 
 update_inventory_file() {
@@ -50,9 +49,6 @@ update_inventory_file() {
 
     echo "[nexus]" >> "$inventory_file"
     echo "nexus ansible_host=$nexus_ip" >> "$inventory_file"
-
-    echo "[monitoring]" >> "$inventory_file"
-    echo "monitoring ansible_host=$monitoring_ip" >> "$inventory_file"
 
 
     # Add common variables
