@@ -10,38 +10,54 @@ pipeline {
     }
 
     stages {
-        stage('Code Checkout') {
+        stage("Workspace cleanup") {
             steps {
-                git branch: 'main', url: 'https://github.com/Nisharg-04/Java-Project-With-DevOps.git'
+                cleanWs()
             }
         }
+        
+        stage('Code Checkout') {
+            steps {
+                script {
+                    code_checkout("https://github.com/Nisharg-04/Java-Project-With-DevOps.git", "main")
+                }
+            }
+        }
+
         stage('Compile the Code') {
             steps {
                 sh "mvn compile"
             }
         }
+
         stage('Test the Code') {
             steps {
                 sh "mvn test"
             }
         }
+
         stage('Scan the Code') {
             steps {
-                sh "trivy fs --format table -o trivy-fs-report.html ."
-            }
-        }
-        stage("SonarQube: Code Analysis") {
-            steps {
-                withSonarQubeEnv('Sonar') {
-                    sh "${SONAR_HOME}/bin/sonar-scanner -Dsonar.projectKey=wanderlust -Dsonar.sources=src -Dsonar.java.binaries=target"
+                script {
+                    trivy_scan()
                 }
             }
         }
+
+        stage("SonarQube: Code Analysis") {
+            steps {
+                script {
+                    sonarqube_analysis("Sonar", "Java App", "Java App")
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 sh "mvn package"
             }
         }
+
         stage('Publish to Nexus') {
             steps {
                 withMaven(globalMavenSettingsConfig: 'global-settings') {
@@ -49,6 +65,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -56,36 +73,44 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
-                
-                    script{
-                        withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
                         sh "docker push nishargsoni/boardgame:latest"
                     }
-                        
-                        }
-                
-            }
-        }
-        
-        stage('Deploy To Kubernetes') {
-            steps {
-               withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.8.146:6443') {
-                        sh "kubectl apply -f deployment-service.yaml"
                 }
             }
         }
-        
-        stage('Verify the Deployment') {
+
+        stage('Update Kubernetes Manifests') {
             steps {
-               withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.8.146:6443') {
-                        sh "kubectl get pods -n webapps"
-                        sh "kubectl get svc -n webapps"
+                script {
+                    sh """
+                    sed -i 's|image: .*|image: nishargsoni/boardgame:latest|' deployment-service.yaml
+                    """
+                }
+            }
+        }
+
+        stage('Push to Git for ArgoCD') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-cred', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                        sh """
+                        git config user.name "Jenkins"
+                        git config user.email "jenkins@example.com"
+                        git add deployment-service.yaml
+                        git commit -m "Update deployment to latest Docker image"
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Nisharg-04/Java-Project-With-DevOps.git main
+                        """
+                    }
                 }
             }
         }
     }
+
     post {
         always {
             script {
@@ -108,7 +133,7 @@ pipeline {
                     </html>
                 """
 
-                emailext (
+                emailext(
                     subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
                     body: body,
                     to: 'ncsoni04@gmail.com',
