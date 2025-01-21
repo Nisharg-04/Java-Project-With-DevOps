@@ -181,7 +181,8 @@ The Jenkins pipeline automates the entire CI/CD workflow for a Java-based projec
 8. **Build Docker Image:** Creates a Docker image for the application.
 9. **Push Docker Image:** Pushes the Docker image to Docker Hub.
 10. **Deploy to Kubernetes:** Deploys the application to a Kubernetes cluster.
-11. **Verify Deployment:** Ensures the application is running correctly in the cluster.
+11. **ArgoCD Deployment:** Updates Kubernetes manifests and triggers ArgoCD for automated deployment.
+12. **Verify Deployment:** Ensures the application is running correctly in the cluster.
 
 ### Notes
 - **Tools and Plugins:** Ensure Jenkins has the required plugins installed (e.g., Git, Maven Integration, Docker Pipeline, SonarQube Scanner, and Kubernetes CLI).
@@ -192,14 +193,14 @@ The Jenkins pipeline automates the entire CI/CD workflow for a Java-based projec
 ## Project Structure
 ```plaintext
 Java-Project-With-DevOps/
-├── Ansible/            # Configuration of Infrastructure
-├── Terraform/          # Setup Infrastructure
-├── src/                # Source code
-├── target/             # Compiled files
-├── Dockerfile          # Docker image definition
-├── k8s-config/                # Kubernetes manifests
-├── Jenkinsfile         # Jenkins pipeline configuration
-├── README.md           # Project documentation
+├── Ansible/                # Configuration of Infrastructure
+├── Terraform/              # Setup Infrastructure
+├── src/                    # Source code
+├── target/                 # Compiled files
+├── Dockerfile              # Docker image definition
+├── deployment-service.yaml # Kubernetes manifests
+├── Jenkinsfile             # Jenkins pipeline configuration
+├── README.md               # Project documentation
 ```
 
 ## How to Use
