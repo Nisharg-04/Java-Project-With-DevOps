@@ -20,12 +20,10 @@ spec:
     spec:
       containers:
         - name: boardgame
-          image: nginx:latest
+          image: nishargsoni/boardgame:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
-# nishargsoni/boardgame:latest
-
+            - containerPort: 8080 
 ---
 
 apiVersion: v1 
