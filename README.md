@@ -3,218 +3,193 @@
 ![Architecture Diagram](Architecture_Diagram.png)
 
 ## Table of Contents
-- [Project Overview]
-- [Features]
-- [Technologies Used]
-- [Setup and Installation]
-- [Continuous Integration and Deployment]
-- [Project Structure]
-- [How to Use]
-- [Testing]
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Setup and Installation](#setup-and-installation)
+  - [Prerequisites](#prerequisites)
+  - [Infrastructure Setup](#infrastructure-setup)
+  - [Local Build and Run](#local-build-and-run)
+  - [Docker Setup](#docker-setup)
+  - [Kubernetes Deployment](#kubernetes-deployment)
+- [Continuous Integration and Deployment](#continuous-integration-and-deployment)
+  - [Jenkins Pipeline Overview](#jenkins-pipeline-overview)
+  - [GitOps with ArgoCD](#gitops-with-argocd)
+- [Project Structure](#project-structure)
+- [How to Use](#how-to-use)
+- [Contributing](#contributing)
+
+---
 
 ## Project Overview
-This project demonstrates the integration of DevOps principles with a Java application. It includes the complete lifecycle of software development, deployment, and monitoring, following industry best practices. The project utilizes tools and technologies for source control, continuous integration, containerization, orchestration, and monitoring.
+This project demonstrates modern DevOps practices integrated with a Java application. It covers the complete software lifecycle including source control, continuous integration (Jenkins), continuous deployment (Kubernetes), and GitOps-driven deployments (ArgoCD). The infrastructure is managed as code using Terraform and Ansible to ensure a reproducible and scalable environment.
+
+---
 
 ## Features
-- Modular Java application
-- Continuous Integration with automated builds
-- Continuous Deployment to a containerized environment
-- Infrastructure as Code (IaC)
+- **Modular Java Application:** A clean, modular codebase.
+- **Automated CI/CD:** Integration with Jenkins for automated builds, tests, and deployments.
+- **GitOps-Driven Deployment:** Leverages ArgoCD to ensure that Kubernetes clusters are always in sync with the Git repository.
+- **Containerization:** Docker is used to build and deploy container images.
+- **Orchestration:** Kubernetes is used to orchestrate the containers.
+- **Infrastructure as Code (IaC):** Provisioning is automated with Terraform and Ansible.
+
+---
 
 ## Technologies Used
 - **Programming Language:** Java
-- **Build Tool:** Maven/Gradle
+- **Build Tool:** Maven or Gradle
 - **Version Control:** Git
 - **CI/CD:** Jenkins
 - **Containerization:** Docker
 - **Orchestration:** Kubernetes
-- **Infrastructure as Code:** Terraform/Ansible
+- **Infrastructure as Code:** Terraform and Ansible
+- **GitOps:** ArgoCD
+
+---
 
 ## Setup and Installation
 
 ### Prerequisites
-1. Java Development Kit (JDK 11 or later)
-2. Maven or Gradle
-3. Docker and Docker Compose
-4. Kubernetes cluster (Minikube, AKS, EKS, or GKE)
-5. Terraform/Ansible for infrastructure provisioning
+- **Java Development Kit (JDK 11 or later)**
+- **Maven or Gradle** for building the project
+- **Docker and Docker Compose**
+- **Kubernetes Cluster** (e.g., Minikube, AKS, EKS, or GKE)
+- **Terraform and Ansible** for infrastructure provisioning
 
-
-
-# Infrastructure Setup with Terraform, Ansible
-
-## Overview
-This documentation outlines the process for setting up a complete  infrastructure for a Java-based application. The infrastructure is provisioned using Terraform, and Ansible is used to configure the instances, including setting up a Kubernetes cluster and related services like Jenkins, SonarQube, and Nexus.
-
----
-
-## Prerequisites
-
-1. **Terraform**: Ensure Terraform is installed on your local machine.
-2. **Ansible**: Install Ansible and ensure the required roles are configured.
-3. **AWS Account**: Ensure access to an AWS account with the necessary permissions.
-4. **Public Key**: Place your public key file (`devops-key.pub`) in the appropriate directory.
-5. **AMI**: Replace placeholder AMI IDs in the Terraform configuration with appropriate values.
-
----
-
-## Steps to Provision Infrastructure
-
-### 1. Clone the Repository
-```bash
-$ git clone <repository-url>
-$ cd <repository-directory>
-```
-
-### 2. Initialize Terraform
-```bash
-$ terraform init
-```
-
-### 3. Validate the Configuration
-```bash
-$ terraform validate
-```
-
-### 4. Apply the Configuration
-```bash
-$ terraform apply
-```
-- Review the plan and type `yes` to proceed.
-- Terraform provisions the VPC, security groups, EC2 instances, and other resources.
-
----
-
-## Update Inventory Script
-After the Terraform provisioning is complete, update the Ansible inventory file dynamically:
-
-1. Run the inventory update script:
-```bash
-$ ./update_inventory.sh
-```
-- This script fetches the public/private IPs of the provisioned instances and updates the Ansible inventory file.
-
----
-
-## Configure Instances with Ansible
-
-### Configure all the Instances
-```bash
-   $ ansible-playbook -i inventories/inventory playbook.yml
-   ```
-
----
-
-## Kubernetes Cluster Verification
-
-1. **Verify Nodes**:
-   Run the following command on the master node:
+### Infrastructure Setup
+1. **Clone the Repository:**
    ```bash
-   $ kubectl get nodes
+   git clone https://github.com/Nisharg-04/Java-Project-With-DevOps.git
+   cd Java-Project-With-DevOps
    ```
-   Ensure all nodes are in the `Ready` state.
 
----
+2. **Initialize and Apply Terraform:**
+   ```bash
+   terraform init
+   terraform validate
+   terraform apply
+   ```
 
-## Notes
+3. **Update Ansible Inventory:**
+   ```bash
+   ./update_inventory.sh
+   ```
 
-- **Terraform Modules**: The `infra` directory contains reusable Terraform modules for EC2 instances.
-- **Ansible Roles**: Ensure roles for Docker, Kubernetes, SonarQube, Jenkins, and Nexus are properly configured in the `roles` directory.
+4. **Configure Instances with Ansible:**
+   ```bash
+   ansible-playbook -i inventories/inventory playbook.yml
+   ```
 
----
-
-This document provides a high-level guide to setting up and configuring the infrastructure. For detailed configurations, refer to the respective directories and files in the repository.
-
-### Clone the Repository
-```bash
-git clone https://github.com/Nisharg-04/Java-Project-With-DevOps.git
-cd Java-Project-With-DevOps
-```
-
-### Build the Project
-```bash
-mvn clean install
-```
-
-### Run Locally
-To run the application locally:
-```bash
-java -jar target/your-application.jar
-```
-
+### Local Build and Run
+1. **Build the Project:**
+   ```bash
+   mvn clean install
+   ```
+2. **Run the Application Locally:**
+   ```bash
+   java -jar target/your-application.jar
+   ```
 
 ### Docker Setup
-1. Build the Docker image:
+1. **Build the Docker Image:**
    ```bash
    docker build -t nishargsoni/boardgame:latest .
    ```
-2. Run the Docker container:
+2. **Run the Docker Container:**
    ```bash
    docker run -p 8080:8080 nishargsoni/boardgame:latest
    ```
 
-
 ### Kubernetes Deployment
-1. Apply the Kubernetes manifests:
+1. **Apply the Kubernetes Manifests:**
    ```bash
    kubectl apply -f deployment-service.yaml
    ```
-2. Verify the deployment:
+2. **Verify the Deployment:**
    ```bash
    kubectl get pods -n webapps
    kubectl get svc -n webapps
-   ``
+   ```
+
+---
 
 ## Continuous Integration and Deployment
-The project uses Jenkins for CI/CD.
 
 ### Jenkins Pipeline Overview
-The Jenkins pipeline automates the entire CI/CD workflow for a Java-based project. It includes the following stages:
+The Jenkins pipeline automates the CI/CD process with the following stages:
+1. **Code Checkout:** Retrieve the latest code from the Git repository.
+2. **Compile:** Build the Java application using Maven.
+3. **Test:** Run unit tests to ensure code quality.
+4. **Static Analysis:** Perform code quality and security scans.
+5. **Artifact Build:** Package the application into a JAR/WAR file.
+6. **Publish Artifacts:** Deploy the build artifact to Nexus Repository Manager.
+7. **Docker Build:** Create a Docker image for the application.
+8. **Push Docker Image:** Upload the Docker image to Docker Hub.
+9. **Deploy to Kubernetes:** Apply the Kubernetes manifests to update the cluster.
+10. **GitOps Sync via ArgoCD:** Trigger ArgoCD to synchronize the desired state from the Git repository.
 
-1. **Code Checkout:** Pulls the source code from the GitHub repository.
-2. **Compile the Code:** Compiles the Java project using Maven.
-3. **Test the Code:** Runs unit tests to ensure code quality.
-4. **Scan the Code:** Scans the codebase using Trivy for security vulnerabilities.
-5. **SonarQube Analysis:** Analyzes the code for quality metrics using SonarQube.
-6. **Build:** Packages the application into a JAR/WAR file.
-7. **Publish to Nexus:** Deploys the build artifact to Nexus Repository Manager.
-8. **Build Docker Image:** Creates a Docker image for the application.
-9. **Push Docker Image:** Pushes the Docker image to Docker Hub.
-10. **Deploy to Kubernetes:** Deploys the application to a Kubernetes cluster.
-11. **ArgoCD Deployment:** Updates Kubernetes manifests and triggers ArgoCD for automated deployment.
-12. **Verify Deployment:** Ensures the application is running correctly in the cluster.
+### GitOps with ArgoCD
+ArgoCD ensures that your Kubernetes cluster's state always reflects the configuration defined in the Git repository.
 
-### Notes
-- **Tools and Plugins:** Ensure Jenkins has the required plugins installed (e.g., Git, Maven Integration, Docker Pipeline, SonarQube Scanner, and Kubernetes CLI).
-- **SonarQube Configuration:** Configure SonarQube in Jenkins with the appropriate credentials and tools.
-- **Docker Hub Credentials:** Store Docker Hub credentials securely in Jenkins Credentials Manager.
-- **Kubernetes Configuration:** Ensure Kubernetes is properly configured with valid credentials and the correct context.
+**Setup:**
+- Install and configure the ArgoCD server and CLI.
+- Connect ArgoCD to your Git repository where the Kubernetes manifests reside.
+- Integrate ArgoCD sync triggers into your Jenkins pipeline.
+
+For more details, refer to the [ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/).
+
+---
 
 ## Project Structure
 ```plaintext
 Java-Project-With-DevOps/
-├── Ansible/                # Configuration of Infrastructure
-├── Terraform/              # Setup Infrastructure
-├── src/                    # Source code
-├── target/                 # Compiled files
-├── Dockerfile              # Docker image definition
-├── deployment-service.yaml # Kubernetes manifests
-├── Jenkinsfile             # Jenkins pipeline configuration
-├── README.md               # Project documentation
+├── Ansible/                  # Ansible playbooks for configuration
+├── Terraform/                # Terraform scripts and modules for infrastructure provisioning
+├── src/                      # Java source code
+├── target/                   # Compiled artifacts
+├── Dockerfile                # Docker image definition
+├── deployment-service.yaml   # Kubernetes manifests
+├── Jenkinsfile               # Jenkins pipeline configuration
+└── README.md                 # Documentation
 ```
 
-## How to Use
-1. Clone the repository and set up the environment.
-2. Use Jenkins to run the pipeline and deploy the application.
-3. Verify the deployment on the Kubernetes cluster.
+---
 
+## How to Use
+1. **Clone the Repository:** Follow the cloning instructions above.
+2. **Set Up Infrastructure:** Use Terraform and Ansible to provision and configure your environment.
+3. **Build and Deploy Locally or in Containers:** Build the project locally or create Docker images.
+4. **Run the Jenkins Pipeline:** Trigger the CI/CD pipeline in Jenkins.
+5. **Monitor via ArgoCD:** Verify deployment and synchronization using ArgoCD.
+
+---
 
 ## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request.
+Contributions are welcome! To contribute:
+1. Fork the repository.
+2. Create a feature branch:
+   ```bash
+   git checkout -b feature-name
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m 'Add feature-name'
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature-name
+   ```
+5. Open a pull request.
 
-### Steps to Contribute
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Commit your changes: `git commit -m 'Add feature-name'`
-4. Push to the branch: `git push origin feature-name`
-5. Open a pull request
+---
+
+## Testing
+Run the tests using Maven:
+```bash
+mvn test
+```
+
+---
+
+*For additional details, refer to the repository's documentation and configuration files.*
